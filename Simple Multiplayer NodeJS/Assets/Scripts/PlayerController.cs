@@ -6,6 +6,7 @@ public class PlayerController : MonoBehaviour {
 	public GameObject bulletPrefab;
 	public Transform bulletSpawn;
 	public bool isLocalPlayer = false;
+    public bool vivo = true;
     public Camera camaraMia;
     public Camera camaraPerdiste;
 
@@ -28,30 +29,35 @@ public class PlayerController : MonoBehaviour {
 		if (!isLocalPlayer) {
 			return;
 		}
+        if (vivo)
+        {
+            var x = Input.GetAxis("Horizontal") * Time.deltaTime * 150.0f;
+            var z = Input.GetAxis("Vertical") * Time.deltaTime * 3.0f;
 
-		var x = Input.GetAxis ("Horizontal") * Time.deltaTime * 150.0f;
-		var z = Input.GetAxis ("Vertical") * Time.deltaTime * 3.0f;
+            transform.Rotate(0, x, 0);
+            transform.Translate(0, 0, z);
 
-		transform.Rotate (0, x, 0);
-		transform.Translate (0, 0, z);
+            currentPosition = transform.position;
+            currentRotation = transform.rotation;
 
-		currentPosition = transform.position;
-		currentRotation = transform.rotation;
+            if (currentPosition != oldPosition)
+            {
+                NetworkManager.instance.GetComponent<NetworkManager>().CommandMove(transform.position);
+                oldPosition = currentPosition;
+            }
 
-		if (currentPosition != oldPosition) {
-			NetworkManager.instance.GetComponent<NetworkManager>().CommandMove(transform.position);
-			oldPosition = currentPosition;
-		}
+            if (currentRotation != oldRotation)
+            {
+                NetworkManager.instance.GetComponent<NetworkManager>().CommandTurn(transform.rotation);
+                oldRotation = currentRotation;
+            }
 
-		if (currentRotation != oldRotation) {
-			NetworkManager.instance.GetComponent<NetworkManager>().CommandTurn(transform.rotation);
-			oldRotation = currentRotation;
-		}
-
-		if (Input.GetKeyDown (KeyCode.Space)) {
-			NetworkManager n = NetworkManager.instance.GetComponent<NetworkManager>();
-			n.CommandShoot();
-		}
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                NetworkManager n = NetworkManager.instance.GetComponent<NetworkManager>();
+                n.CommandShoot();
+            }
+        }
 	}
 
 	public void CmdFire() {

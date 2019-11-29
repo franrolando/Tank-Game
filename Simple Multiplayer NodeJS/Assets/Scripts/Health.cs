@@ -5,6 +5,7 @@ public class Health : MonoBehaviour {
 
 	public const int maxHealth = 100;
 	public bool destroyOnDeath;
+    public PlayerController pc;
 
 	public int currentHealth = maxHealth;
 	public bool isEnemy = false;
@@ -30,7 +31,8 @@ public class Health : MonoBehaviour {
 		healthBar.sizeDelta = new Vector2(currentHealth, healthBar.sizeDelta.y);
 		if(currentHealth <= 0) {
 			if(destroyOnDeath) {
-				Destroy(gameObject);
+                pc.vivo = false;
+				//Destroy(gameObject);
 			}
 			else {
 				currentHealth = maxHealth;
